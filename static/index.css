@@ -1,0 +1,91 @@
+body {
+    margin: 0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    background: url("/static/fondo.jpeg") no-repeat center center fixed;
+    background-size: cover;
+    color: #f0f0f0;
+}
+
+.overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+header {
+    margin-bottom: 40px;
+}
+
+.logo {
+    height: 250px; /* Tamaño grande */
+    margin-bottom: 5px; /* Menos separación */
+}
+
+h1 {
+    font-size: 3em;
+    color: #ffaa00;
+    letter-spacing: 2px;
+    margin-top: 0;       /* Quitar margen superior */
+    margin-bottom: 0.2em;
+}
+
+.subtitulo {
+    font-size: 1.2em;
+    color: #ccc;
+}
+
+.tabla-wrapper {
+    overflow-x: auto;
+    background-color: rgba(20, 20, 20, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #ffaa00;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #fff;
+}
+
+th, td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #444;
+}
+
+th {
+    background-color: #1f1f1f;
+    color: #ffaa00;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+tr:hover {
+    background-color: rgba(255, 170, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    .subtitulo {
+        font-size: 1em;
+    }
+
+    th, td {
+        font-size: 0.8em;
+    }
+
+    .logo {
+        height: 100px; /* Tamaño reducido para pantallas pequeñas */
+    }
+}
