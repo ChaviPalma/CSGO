@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: 'Consolas', 'Courier New', monospace;
-    background: url("/static/fondo.jpeg") no-repeat center center fixed;
+    background: url("/static/img/fondo.jpeg") no-repeat center center fixed;
     background-size: cover;
     color: #f0f0f0;
 }
@@ -24,16 +24,29 @@ header {
     margin-bottom: 40px;
 }
 
-.logo {
-    height: 250px; /* Tamaño grande */
-    margin-bottom: 5px; /* Menos separación */
+
+/* Navbar con contenido alineado a la izquierda */
+.nav-link:hover {
+  color: #a7c2d3;
+  text-decoration: underline;
 }
+.navbar {
+    background-color: rgba(255, 170, 0, 0.359);
+    padding: 10px ;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    position: relative;
+    z-index: 10;
+}
+
 
 h1 {
     font-size: 3em;
     color: #ffaa00;
     letter-spacing: 2px;
-    margin-top: 0;       /* Quitar margen superior */
+    margin-top: 0;
     margin-bottom: 0.2em;
 }
 
@@ -85,7 +98,13 @@ tr:hover {
         font-size: 0.8em;
     }
 
-    .logo {
-        height: 100px; /* Tamaño reducido para pantallas pequeñas */
-    }
+
+
+}
+.model-section {
+    background-color: rgba(34, 34, 34, 0.9);
+    padding: 20px;
+    margin-bottom: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #ffaa00;
 }

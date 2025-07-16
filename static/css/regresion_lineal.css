@@ -1,0 +1,144 @@
+body {
+    margin: 0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    background: url("/static/img/fondo.jpeg") no-repeat center center fixed;
+    background-size: cover;
+    color: #f0f0f0;
+}
+
+.overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+header {
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 3em;
+    color: #ffaa00;
+    letter-spacing: 2px;
+    margin-top: 0;
+    margin-bottom: 0.2em;
+}
+
+.subtitulo {
+    font-size: 1.2em;
+    color: #ccc;
+}
+
+.tabla-wrapper {
+    overflow-x: auto;
+    background-color: rgba(20, 20, 20, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #ffaa00;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #fff;
+}
+
+th, td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #444;
+}
+
+th {
+    background-color: #1f1f1f;
+    color: #ffaa00;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+tr:hover {
+    background-color: rgba(255, 170, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    .subtitulo {
+        font-size: 1em;
+    }
+
+    th, td {
+        font-size: 0.8em;
+    }
+}
+
+.model-section {
+    background-color: rgba(34, 34, 34, 0.9);
+    padding: 20px;
+    margin-bottom: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #ffaa00;
+}
+
+/* Métricas cards */
+.metric-card {
+    min-width: 120px;
+}
+.metric-card {
+    background-color: rgba(50, 50, 50, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ffaa00;
+    margin-bottom: 20px;
+}
+
+/* ============================
+   NAVBAR PERSONALIZADO
+   ============================ */
+.navbar {
+    background-color: rgba(255, 170, 0, 0.36) !important;
+    padding: 10px 20px;
+    z-index: 1000;
+}
+
+.navbar .nav-link {
+    color: #fff !important;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+    color: #a7c2d3 !important;
+    text-shadow: 0 0 5px #ffaa00;
+    text-decoration: underline;
+}
+
+.navbar .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255,255,255,0.9)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.dropdown-menu {
+    background-color: rgba(34, 34, 34, 0.95);
+    border: 1px solid #ffaa00;
+}
+
+.dropdown-item {
+    color: #fff;
+}
+
+.dropdown-item:hover {
+    background-color: #ffaa00;
+    color: #000;
+}
