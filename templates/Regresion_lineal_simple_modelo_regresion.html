@@ -9,11 +9,20 @@
 </head>
 <body>
 
-<div class="collapse navbar-collapse text-uppercase fs-5" id="navbarSupportedContent">
+<nav class="navbar navbar-expand-lg bg-blue fixed-top">
+  <div class="container-fluid">
+    <img src="/static/img/csgo_logo.png" class="ms-4" alt="logo CS:GO" width="120" height="100" />
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse text-uppercase fs-5" id="navbarSupportedContent">
       <ul class="navbar-nav mx-auto fw-semibold gap-3">
 
         <li class="nav-item">
-          <a class="nav-link text-white" href="#inicio">Inicio</a>
+          <a class="nav-link text-white" href="/">Inicio</a>
         </li>
 
         <!-- Submenú Regresión -->
@@ -23,8 +32,8 @@
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/regresion-lineal-simple">Regresión Lineal Simple</a></li>
-            <li><a class="dropdown-item" href="/static/notebooks/Regresion_lineal_multiple_modelo_regresion.html">Regresión Lineal Múltiple</a></li>
-            <li><a class="dropdown-item" href="/static/notebooks/Arbol_decision_modelo_regresion.html">Árbol de Decisión</a></li>
+            <li><a class="dropdown-item" href="/regresion-lineal-multiple">Regresión Lineal Múltiple</a></li>
+            <li><a class="dropdown-item" href="/arbol-decision-regresion">Árbol de Decisión</a></li>
             <li><a class="dropdown-item" href="/static/notebooks/Suppport_vector_machine_modelo_regresion.html">SVM</a></li>
             <li><a class="dropdown-item" href="/static/notebooks/Random_forest_modelo_regresion.html">Random Forest</a></li>
           </ul>
@@ -48,23 +57,6 @@
   </div>
 </nav>
 
-        <!-- Submenú Clasificación -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Modelos de Clasificación
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#regresion_logistica">Regresión Logística</a></li>
-            <li><a class="dropdown-item" href="#knn">KNN</a></li>
-            <li><a class="dropdown-item" href="#clasificacion_tree">Árbol de Clasificación</a></li>
-          </ul>
-        </li>
-
-      </ul>
-    </div>
-  </div>
-</nav>
-
 
 <div class="overlay"></div>
 
@@ -73,6 +65,7 @@
     <h1>📈 Regresión Lineal Simple</h1>
     <p class="subtitulo">Análisis de relación entre MatchHeadshots y MatchKills</p>
   </header>
+
 
   <!-- Gráfico -->
   <section class="model-section my-4">
