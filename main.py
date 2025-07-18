@@ -19,6 +19,9 @@ import matplotlib.pyplot as plt
 import io
 import base64
 
+from fastapi import Form
+import joblib
+
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -35,10 +38,10 @@ for var in variables:
 df = df.dropna(subset=variables)
 df = df[(df["MatchHeadshots"] > 0) & (df["MatchKills"] > 0)]
 
-# ✅ CORRECCIÓN: garantizar mismo orden de datos que en el notebook
+
 df = df.sort_index().reset_index(drop=True)
 
-# Función para estadísticas descriptivas
+
 def generar_estadisticas(df_subset):
     estadisticas = df_subset.describe().T.reset_index()
     estadisticas_records = estadisticas.to_dict(orient="records")
@@ -68,7 +71,7 @@ async def regresion_lineal_simple(request: Request):
     mae = 2.63
     rmse = 3.46
 
-    # Definir estadisticas y estadisticas_records
+    
     estadisticas, estadisticas_records = generar_estadisticas(df[[X_col, y_col]])
 
     return templates.TemplateResponse("regresion_lineal_simple_modelo_regresion.html", {
@@ -84,15 +87,15 @@ async def regresion_lineal_simple(request: Request):
 # === RUTA: Regresión Lineal Múltiple ===
 @app.get("/regresion-lineal-multiple", response_class=HTMLResponse)
 async def regresion_lineal_multiple(request: Request):
-    # Métricas fijas que quieres mostrar
+    
     r2 = 0.826
     mae = 1.90
     rmse = 6.74
 
-    # Estadísticas descriptivas del dataset completo (puedes ajustar columnas si quieres)
+    
     estadisticas, estadisticas_records = generar_estadisticas(df[['MatchHeadshots', 'MatchFlankKills', 'MatchAssists', 'RoundId', 'MatchKills']])
 
-    # Ruta imagen estática que ya debes tener en /static/img/
+    
     graph_path = "/static/img/regresion_lineal_multiple.png"
 
     return templates.TemplateResponse("Regresion_lineal_multiple_modelo_regresion.html", {
@@ -110,7 +113,7 @@ async def regresion_lineal_multiple(request: Request):
 # === RUTA: Decision tree ===
 @app.get("/arbol-decision-regresion", response_class=HTMLResponse)
 async def arbol_decision_regresion(request: Request):
-    # Variables seleccionadas (como en el notebook)
+    
     predictors = ['MatchHeadshots', 'MatchFlankKills', 'MatchAssists', 'MatchWinner']
     target = 'MatchKills'
 
@@ -126,12 +129,11 @@ async def arbol_decision_regresion(request: Request):
     modelo.fit(X_train, y_train)
     y_pred = modelo.predict(X_test)
 
-    # Métricas fijas que quieres mostrar
+    
     r2 = 0.763
     mae = 2.27
     rmse = 9.17
 
-    # Graficar árbol y codificar en base64
     fig, ax = plt.subplots(figsize=(20, 10))
     plot_tree(modelo, feature_names=predictors, filled=True, fontsize=10)
     buf = io.BytesIO()
@@ -141,7 +143,7 @@ async def arbol_decision_regresion(request: Request):
     graph_base64 = base64.b64encode(buf.read()).decode('utf-8')
     graph_html = f'<img src="data:image/png;base64,{graph_base64}" class="img-fluid rounded shadow">'
 
-    # Estadísticas descriptivas
+    
     estadisticas, estadisticas_records = generar_estadisticas(pd.concat([X_test, y_test], axis=1))
 
     return templates.TemplateResponse("Decision_tree_modelo_regresion.html", {
@@ -158,15 +160,15 @@ async def arbol_decision_regresion(request: Request):
 # === RUTA: Support Vector Machine ===
 @app.get("/support-vector-machine-regresion", response_class=HTMLResponse)
 async def support_vector_machine_regresion(request: Request):
-    # Métricas fijas que quieres mostrar
+    
     mae = 1.84
     rmse = 2.57
     r2 = 0.830
 
-    # Estadísticas descriptivas (puedes ajustar según tu dataset)
+    
     estadisticas, estadisticas_records = generar_estadisticas(df[['MatchHeadshots', 'MatchFlankKills', 'MatchAssists', 'RoundId', 'MatchKills']])
 
-    # Ruta de la imagen estática que entregas
+    
     graph_path = "/static/img/svm_regresion.png"
 
     return templates.TemplateResponse("Support_Vector_Machine_modelo_regresion.html", {
@@ -182,12 +184,12 @@ async def support_vector_machine_regresion(request: Request):
 # === RUTA: Random Forest Regresión ===
 @app.get("/random-forest-regresion", response_class=HTMLResponse)
 async def random_forest_regresion(request: Request):
-    # Métricas fijas que quieres mostrar
+    
     mae = 1.95
     rmse = 7.24
     r2 = 0.813
 
-    # Estadísticas descriptivas (ajustar según dataset)
+    
     estadisticas, estadisticas_records = generar_estadisticas(df[['MatchHeadshots', 'MatchFlankKills', 'MatchAssists', 'RoundId', 'MatchKills']])
 
     graph_path = "/static/img/random_forest_regresion.png"
@@ -207,13 +209,13 @@ async def random_forest_regresion(request: Request):
 # === RUTA: Support Vector Machine - Clasificación ===
 @app.get("/support-vector-machine-clasificacion", response_class=HTMLResponse)
 async def support_vector_machine_clasificacion(request: Request):
-    # Métricas fijas que quieres mostrar
+    
     accuracy = 0.71
     precision = 0.70
     recall = 0.76
     f1_score = 0.73
 
-    # Tu reporte de clasificación en texto plano (el que me diste)
+    
     classification_report_text = """
               precision    recall  f1-score   support
 
@@ -225,23 +227,23 @@ async def support_vector_machine_clasificacion(request: Request):
 weighted avg       0.72      0.71      0.71      6554
     """
 
-    # --- Convertir texto en DataFrame para la plantilla ---
-    # 1. Quitar líneas vacías y recortar espacios
+
+    
     lines = [line.strip() for line in classification_report_text.strip().splitlines() if line.strip()]
-    # 2. La primera línea son columnas
+    
     columns = ['class'] + lines[0].split()
-    # 3. Las siguientes líneas son filas de datos
+    
     data = []
     for line in lines[1:]:
         parts = line.split()
-        # La clase puede tener espacios (como 'macro avg' o 'weighted avg'), unirlos
+        
         if len(parts) == len(columns):
             data.append(parts)
         else:
-            # Unir los primeros N partes que correspondan al nombre de la clase
+            
             class_name_parts = []
             for i, part in enumerate(parts):
-                # detectamos cuando empieza la primera columna numérica (float)
+                
                 try:
                     float(part)
                     first_num_idx = i
@@ -253,14 +255,14 @@ weighted avg       0.72      0.71      0.71      6554
             row = [class_name] + rest
             data.append(row)
 
-    # Crear DataFrame
+    
     class_report_df = pd.DataFrame(data, columns=columns)
 
-    # Convertir las columnas numéricas de string a float para facilitar el formateo en el template
+    
     for col in columns[1:]:
         class_report_df[col] = pd.to_numeric(class_report_df[col], errors='coerce')
 
-    # Estadísticas descriptivas (usa tus features reales)
+    
     features = [
         'RoundKills',
         'RoundDeaths',
@@ -277,7 +279,7 @@ weighted avg       0.72      0.71      0.71      6554
 
     estadisticas, estadisticas_records = generar_estadisticas(X)
 
-    # Rutas a imágenes estáticas
+    
     confusion_matrix = "/static/img/confusion_matrix_SVM.png"
     roc_auc_curve = "/static/img/roc_auc_curve.png"
     prob_dist = "/static/img/distribucion_probabilidades.png"
@@ -300,13 +302,13 @@ weighted avg       0.72      0.71      0.71      6554
 # === RUTA: arbol de decision - Clasificación ===
 @app.get("/arbol-decision-clasificacion", response_class=HTMLResponse)
 async def arbol_decision_clasificacion(request: Request):
-    # Métricas fijas
+    
     accuracy = 0.71
     precision = 0.72
     recall = 0.68
     f1 = 0.70
 
-    # Reporte de clasificación actualizado
+    
     classification_report_text = """
               precision    recall  f1-score   support
 
@@ -318,7 +320,7 @@ async def arbol_decision_clasificacion(request: Request):
 weighted avg       0.71      0.71      0.71      6554
     """
 
-    # Procesar texto a DataFrame
+   
     lines = [line.strip() for line in classification_report_text.strip().splitlines() if line.strip()]
     columns = ['class'] + lines[0].split()
     data = []
@@ -344,7 +346,7 @@ weighted avg       0.71      0.71      0.71      6554
     for col in columns[1:]:
         class_report_df[col] = pd.to_numeric(class_report_df[col], errors='coerce')
 
-    # Estadísticas descriptivas (igual que en SVM)
+    
     features = [
         'RoundKills',
         'RoundDeaths',
@@ -361,7 +363,7 @@ weighted avg       0.71      0.71      0.71      6554
 
     estadisticas, estadisticas_records = generar_estadisticas(X)
 
-    # Rutas a imágenes estáticas (pon las tuyas)
+    
     confusion_matrix = "/static/img/confusion_matrix_decision_tree.png"
     roc_auc_curve = "/static/img/roc_auc_curve_decision_tree.png"
     prob_dist = "/static/img/distribucion_probabilidades_decision_tree.png"
@@ -384,7 +386,7 @@ weighted avg       0.71      0.71      0.71      6554
 # === RUTA: KNN - Clasificación ===
 @app.get("/knn", response_class=HTMLResponse)
 async def knn_clasificacion(request: Request):
-    # Filtrar y preparar datos para estadística descriptiva
+    
     features = [
         'RoundKills',
         'RoundDeaths',
@@ -400,13 +402,13 @@ async def knn_clasificacion(request: Request):
     X = df_filtered[features]
     X = pd.get_dummies(X, columns=['Map', 'Team'])
 
-    # Métricas fijas
+    
     accuracy = 0.70
     precision = 0.71
     recall = 0.68
     f1 = 0.69
 
-    # Reporte de clasificación por clase
+    
     class_report_dict = {
         "Clase": ["Perdida", "Victoria", "accuracy", "macro avg", "weighted avg"],
         "precision": [0.68, 0.71, "", 0.70, 0.70],
@@ -418,10 +420,10 @@ async def knn_clasificacion(request: Request):
     class_report_df = class_report_df.rename(columns={"Clase": ""})
     class_report_records = class_report_df.to_dict(orient="records")
 
-    # Estadísticas descriptivas
+    
     estadisticas, estadisticas_records = generar_estadisticas(X)
 
-    # Imágenes estáticas
+    
     confusion_matrix = "/static/img/confusion_matrix_knn.png"
     roc_auc_curve = "/static/img/roc_auc_curve_knn.png"
     prob_dist = "/static/img/distribucion_probabilidades_knn.png"
@@ -445,7 +447,7 @@ async def knn_clasificacion(request: Request):
 # === RUTA: logistic_regression===
 @app.get("/logistic-regression-clasificacion", response_class=HTMLResponse)
 async def logistic_regression_clasificacion(request: Request):
-    # Variables y target para preparar estadísticas
+    
     features = [
         'RoundKills',
         'RoundDeaths',
@@ -457,7 +459,7 @@ async def logistic_regression_clasificacion(request: Request):
         'Team'
     ]
 
-    # Filtrar dataset válido para clasificación
+    
     df_filtered = df[df['RoundWinner'].isin(['True', 'False'])].copy()
     X = df_filtered[features]
     X = pd.get_dummies(X, columns=['Map', 'Team'])
@@ -470,7 +472,7 @@ async def logistic_regression_clasificacion(request: Request):
     recall = 0.74
     f1 = 0.72
 
-    # Reporte de clasificación en texto plano
+    
     classification_report_text = """
               precision    recall  f1-score   support
 
@@ -482,7 +484,7 @@ async def logistic_regression_clasificacion(request: Request):
 weighted avg       0.71      0.71      0.71      6554
     """
 
-    # Procesar texto en DataFrame para tabla
+    
     lines = [line.strip() for line in classification_report_text.strip().splitlines() if line.strip()]
     columns = ['class'] + lines[0].split()
     data = []
@@ -507,10 +509,10 @@ weighted avg       0.71      0.71      0.71      6554
     for col in columns[1:]:
         class_report_df[col] = pd.to_numeric(class_report_df[col], errors='coerce')
 
-    # Estadísticas descriptivas
+    
     estadisticas, estadisticas_records = generar_estadisticas(X)
 
-    # Rutas a imágenes estáticas (ajusta con tus imágenes)
+    
     confusion_matrix = "/static/img/confusion_matrix_logistic_regression.png"
     roc_auc_curve = "/static/img/roc_auc_curve_logistic_regression.png"
     prob_dist = "/static/img/distribucion_probabilidades_logistic_regression.png"
@@ -534,7 +536,7 @@ weighted avg       0.71      0.71      0.71      6554
 
 @app.get("/random-forest-clasificacion", response_class=HTMLResponse)
 async def random_forest_clasificacion(request: Request):
-    # Variables y target
+    
     features = [
         'RoundKills',
         'RoundDeaths',
@@ -546,20 +548,20 @@ async def random_forest_clasificacion(request: Request):
         'Team'
     ]
 
-    # Filtrar dataset válido para clasificación
+
     df_filtered = df[df['RoundWinner'].isin(['True', 'False'])].copy()
     X = df_filtered[features]
     X = pd.get_dummies(X, columns=['Map', 'Team'])
 
     y = df_filtered['RoundWinner'].replace({'True': 1, 'False': 0}).astype(int)
 
-    # Métricas fijas (según tu reporte)
+  
     accuracy = 0.70
     precision = 0.71
     recall = 0.70
     f1 = 0.70
 
-    # Reporte de clasificación en texto plano
+
     classification_report_text = """
               precision    recall  f1-score   support
 
@@ -571,7 +573,7 @@ async def random_forest_clasificacion(request: Request):
 weighted avg       0.70      0.70      0.70      6554
     """
 
-    # Procesar texto en DataFrame para tabla
+
     lines = [line.strip() for line in classification_report_text.strip().splitlines() if line.strip()]
     columns = ['class'] + lines[0].split()
     data = []
@@ -596,10 +598,10 @@ weighted avg       0.70      0.70      0.70      6554
     for col in columns[1:]:
         class_report_df[col] = pd.to_numeric(class_report_df[col], errors='coerce')
 
-    # Estadísticas descriptivas
+   
     estadisticas, estadisticas_records = generar_estadisticas(X)
 
-    # Rutas a imágenes estáticas que debes colocar en /static/img/
+    
     confusion_matrix = "/static/img/confusion_matrix_random_forest.png"
     roc_auc_curve = "/static/img/roc_auc_curve_random_forest.png"
     prob_dist = "/static/img/distribucion_probabilidades_random_forest.png"
@@ -618,3 +620,83 @@ weighted avg       0.70      0.70      0.70      6554
         "estadisticas": estadisticas,
         "estadisticas_records": estadisticas_records,
     })
+
+modelo_svm = joblib.load("models/svm_model.pkl")  
+
+@app.get("/svm-prediccion", response_class=HTMLResponse)
+async def formulario_prediccion(request: Request):
+    return templates.TemplateResponse("SVM_prediccion.html", {"request": request})
+
+@app.post("/svm-prediccion", response_class=HTMLResponse)
+async def predecir_matchkills(
+    request: Request,
+    MatchHeadshots: int = Form(...),
+    MatchFlankKills: int = Form(...),
+    MatchAssists: int = Form(...),
+    RoundId: int = Form(...)
+):
+    if modelo_svm is None:
+        return templates.TemplateResponse("SVM_prediccion.html", {
+            "request": request,
+            "error": "El modelo no está disponible."
+        })
+
+    datos = [[MatchHeadshots, MatchFlankKills, MatchAssists, RoundId]]
+    prediccion = modelo_svm.predict(datos)[0]
+
+    return templates.TemplateResponse("SVM_prediccion.html", {
+        "request": request,
+        "prediccion": round(prediccion, 2)
+    })
+
+
+modelo = joblib.load("models/forest_model.pkl")
+
+@app.get("/random-forest-clasificacion-pred", response_class=HTMLResponse)
+async def mostrar_formulario(request: Request):
+    return templates.TemplateResponse("random_forest_clasificacion_pred.html", {"request": request})
+
+@app.post("/random-forest-clasificacion-pred")
+async def random_forest_clasificacion_post(request: Request, 
+    RoundKills: int = Form(...),
+    RoundDeaths: int = Form(...),
+    KDR: float = Form(...),
+    TeamStartingEquipmentValue: int = Form(...),
+    RLethalGrenadesThrown: int = Form(...),
+    RNonLethalGrenadesThrown: int = Form(...),
+    Map: str = Form(...),
+    Team: str = Form(...)
+):
+    datos = pd.DataFrame([{
+        'RoundKills': RoundKills,
+        'RoundDeaths': RoundDeaths,
+        'KDR': KDR,
+        'TeamStartingEquipmentValue': TeamStartingEquipmentValue,
+        'RLethalGrenadesThrown': RLethalGrenadesThrown,
+        'RNonLethalGrenadesThrown': RNonLethalGrenadesThrown,
+        'Map': Map,
+        'Team': Team
+    }])
+
+    # Aplicar get_dummies para las categóricas
+    datos_encoded = pd.get_dummies(datos, columns=['Map', 'Team'])
+
+    # Añadir columnas que faltan y ordenar
+    for col in columnas_modelo:
+        if col not in datos_encoded.columns:
+            datos_encoded[col] = 0
+    datos_encoded = datos_encoded[columnas_modelo]
+
+    try:
+        modelo = joblib.load("models/forest_model.pkl")
+        pred = modelo.predict(datos_encoded)[0]
+        resultado = "Victoria" if pred == 1 else "Derrota"
+        return templates.TemplateResponse("random_forest_clasificacion_pred.html", {
+            "request": request,
+            "prediccion": resultado
+        })
+    except Exception as e:
+        return templates.TemplateResponse("random_forest_clasificacion_pred.html", {
+            "request": request,
+            "error": f"Error al realizar la predicción: {e}"
+        })

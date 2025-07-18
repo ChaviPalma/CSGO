@@ -108,3 +108,59 @@ tr:hover {
     border-radius: 10px;
     box-shadow: 0 0 15px #ffaa00;
 }
+
+form {
+    background-color: rgba(34, 34, 34, 0.9);
+    padding: 25px 30px;
+    margin: 0 auto 40px auto;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #ffaa00;
+    text-align: left;
+    color: #f0f0f0;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ffaa00;
+    font-size: 1.1em;
+}
+
+form input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #1f1f1f;
+    color: #f0f0f0;
+    font-size: 1em;
+    font-family: 'Consolas', monospace;
+    box-sizing: border-box;
+    transition: box-shadow 0.3s ease;
+}
+
+form input[type="number"]:focus {
+    outline: none;
+    box-shadow: 0 0 8px #ffaa00;
+    background-color: #2a2a2a;
+}
+
+form button {
+    background-color: #ffaa00;
+    border: none;
+    padding: 12px 25px;
+    color: #222;
+    font-weight: bold;
+    font-size: 1.2em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #ffbb33;
+}
