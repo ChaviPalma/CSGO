@@ -33,7 +33,7 @@
             <li><a class="dropdown-item active" href="/regresion-lineal-multiple">Regresión Lineal Múltiple</a></li>
             <li><a class="dropdown-item" href="/arbol-decision-regresion">Árbol de Decisión</a></li>
             <li><a class="dropdown-item" href="/support-vector-machine-regresion">SVM</a></li>
-            <li><a class="dropdown-item" href="/static/notebooks/Random_forest_modelo_regresion.html">Random Forest</a></li>
+            <li><a class="dropdown-item" href="/random-forest-regresion">Random Forest</a></li>
           </ul>
         </li>
 
@@ -62,25 +62,25 @@
   </header>
 
   <!-- Gráfico -->
-  <section class="model-section my-4">
-    {{ graph_html | safe }}
-  </section>
-
+ <section class="model-section my-4 text-center">
+  <img src="{{ graph_path }}" alt="Gráfico estático de regresión lineal múltiple" class="img-fluid" />
+</section>
   <!-- Métricas -->
-  <section class="model-section d-flex justify-content-center my-4 gap-4">
-    <div class="metric-card p-3 border border-warning rounded text-center">
-      <h5>R² Score</h5>
-      <p>{{ r2_score }}</p>
-    </div>
-    <div class="metric-card p-3 border border-info rounded text-center">
-      <h5>MAE</h5>
-      <p>{{ mae }}</p>
-    </div>
-    <div class="metric-card p-3 border border-success rounded text-center">
-      <h5>RMSE</h5>
-      <p>{{ rmse }}</p>
-    </div>
-  </section>
+  <section class="model-section d-flex justify-content-center my-4 gap-4 flex-wrap">
+  <div class="metric-card p-3 border border-warning rounded text-center">
+    <h5>R² Score</h5>
+    <p>{{ r2_score }}</p>
+  </div>
+  <div class="metric-card p-3 border border-info rounded text-center">
+    <h5>MAE</h5>
+    <p>{{ mae }}</p>
+  </div>
+  <div class="metric-card p-3 border border-success rounded text-center">
+    <h5>RMSE</h5>
+    <p>{{ rmse }}</p>
+  </div>
+</section>
+
 
   <!-- Tabla estadística -->
   <section class="tabla-wrapper">

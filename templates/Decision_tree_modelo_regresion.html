@@ -29,7 +29,7 @@
             <li><a class="dropdown-item" href="/regresion-lineal-multiple">Regresión Lineal Múltiple</a></li>
             <li><a class="dropdown-item active" href="/arbol-decision-regresion">Árbol de Decisión</a></li>
             <li><a class="dropdown-item" href="/support-vector-machine-regresion">SVM</a></li>
-            <li><a class="dropdown-item" href="/static/notebooks/Random_forest_modelo_regresion.html">Random Forest</a></li>
+            <li><a class="dropdown-item" href="/random-forest-regresion">Random Forest</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
@@ -51,7 +51,7 @@
 
 <div class="container">
   <header>
-    <h1>🌲 Árbol de Decisión (Regresión)</h1>
+    <h1>🌲 Árbol de Decisión </h1>
     <p class="subtitulo">Predicción de kills usando flanqueos, asistencias, headshots y victoria en partida</p>
   </header>
 
@@ -61,20 +61,20 @@
   </section>
 
   <!-- Métricas -->
-  <section class="model-section d-flex justify-content-center my-4 gap-4">
-    <div class="metric-card p-3 border border-warning rounded text-center">
-      <h5>R² Score</h5>
-      <p>{{ r2_score }}</p>
-    </div>
-    <div class="metric-card p-3 border border-info rounded text-center">
-      <h5>MAE</h5>
-      <p>{{ mae }}</p>
-    </div>
-    <div class="metric-card p-3 border border-success rounded text-center">
-      <h5>RMSE</h5>
-      <p>{{ rmse }}</p>
-    </div>
-  </section>
+  <section class="model-section d-flex justify-content-center my-4 gap-4 flex-wrap">
+  <div class="metric-card p-3 border border-warning rounded text-center">
+    <h5>R² Score</h5>
+    <p>{{ r2_score }}</p>
+  </div>
+  <div class="metric-card p-3 border border-info rounded text-center">
+    <h5>MAE</h5>
+    <p>{{ mae }}</p>
+  </div>
+  <div class="metric-card p-3 border border-success rounded text-center">
+    <h5>RMSE</h5>
+    <p>{{ rmse }}</p>
+  </div>
+</section>
 
   <!-- Tabla estadística -->
   <section class="tabla-wrapper">
