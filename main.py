@@ -203,3 +203,418 @@ async def random_forest_regresion(request: Request):
     })
 
 # === Modelos de Clasificación===
+
+# === RUTA: Support Vector Machine - Clasificación ===
+@app.get("/support-vector-machine-clasificacion", response_class=HTMLResponse)
+async def support_vector_machine_clasificacion(request: Request):
+    # Métricas fijas que quieres mostrar
+    accuracy = 0.71
+    precision = 0.70
+    recall = 0.76
+    f1_score = 0.73
+
+    # Tu reporte de clasificación en texto plano (el que me diste)
+    classification_report_text = """
+              precision    recall  f1-score   support
+
+     Perdida       0.73      0.66      0.70      3234
+    Victoria       0.70      0.76      0.73      3320
+
+    accuracy                           0.71      6554
+   macro avg       0.72      0.71      0.71      6554
+weighted avg       0.72      0.71      0.71      6554
+    """
+
+    # --- Convertir texto en DataFrame para la plantilla ---
+    # 1. Quitar líneas vacías y recortar espacios
+    lines = [line.strip() for line in classification_report_text.strip().splitlines() if line.strip()]
+    # 2. La primera línea son columnas
+    columns = ['class'] + lines[0].split()
+    # 3. Las siguientes líneas son filas de datos
+    data = []
+    for line in lines[1:]:
+        parts = line.split()
+        # La clase puede tener espacios (como 'macro avg' o 'weighted avg'), unirlos
+        if len(parts) == len(columns):
+            data.append(parts)
+        else:
+            # Unir los primeros N partes que correspondan al nombre de la clase
+            class_name_parts = []
+            for i, part in enumerate(parts):
+                # detectamos cuando empieza la primera columna numérica (float)
+                try:
+                    float(part)
+                    first_num_idx = i
+                    break
+                except:
+                    class_name_parts.append(part)
+            class_name = ' '.join(class_name_parts)
+            rest = parts[first_num_idx:]
+            row = [class_name] + rest
+            data.append(row)
+
+    # Crear DataFrame
+    class_report_df = pd.DataFrame(data, columns=columns)
+
+    # Convertir las columnas numéricas de string a float para facilitar el formateo en el template
+    for col in columns[1:]:
+        class_report_df[col] = pd.to_numeric(class_report_df[col], errors='coerce')
+
+    # Estadísticas descriptivas (usa tus features reales)
+    features = [
+        'RoundKills',
+        'RoundDeaths',
+        'KDR',
+        'TeamStartingEquipmentValue',
+        'RLethalGrenadesThrown',
+        'RNonLethalGrenadesThrown',
+        'Map',
+        'Team'
+    ]
+    df_filtered = df[df['RoundWinner'].isin(['True', 'False'])].copy()
+    X = df_filtered[features]
+    X = pd.get_dummies(X, columns=['Map', 'Team'])
+
+    estadisticas, estadisticas_records = generar_estadisticas(X)
+
+    # Rutas a imágenes estáticas
+    confusion_matrix = "/static/img/confusion_matrix_SVM.png"
+    roc_auc_curve = "/static/img/roc_auc_curve.png"
+    prob_dist = "/static/img/distribucion_probabilidades.png"
+
+    return templates.TemplateResponse("SVM_Clasificacion.html", {
+        "request": request,
+        "accuracy": f"{accuracy:.2f}",
+        "precision": f"{precision:.2f}",
+        "recall": f"{recall:.2f}",
+        "f1": f"{f1_score:.2f}",
+        "confusion_matrix": confusion_matrix,
+        "roc_auc_curve": roc_auc_curve,
+        "prob_dist": prob_dist,
+        "class_report": class_report_df,
+        "class_report_records": class_report_df.to_dict(orient="records"),
+        "estadisticas": estadisticas,
+        "estadisticas_records": estadisticas_records,
+    })
+
+# === RUTA: arbol de decision - Clasificación ===
+@app.get("/arbol-decision-clasificacion", response_class=HTMLResponse)
+async def arbol_decision_clasificacion(request: Request):
+    # Métricas fijas
+    accuracy = 0.71
+    precision = 0.72
+    recall = 0.68
+    f1 = 0.70
+
+    # Reporte de clasificación actualizado
+    classification_report_text = """
+              precision    recall  f1-score   support
+
+     Perdida       0.69      0.73      0.71      3234
+    Victoria       0.72      0.68      0.70      3320
+
+    accuracy                           0.71      6554
+   macro avg       0.71      0.71      0.71      6554
+weighted avg       0.71      0.71      0.71      6554
+    """
+
+    # Procesar texto a DataFrame
+    lines = [line.strip() for line in classification_report_text.strip().splitlines() if line.strip()]
+    columns = ['class'] + lines[0].split()
+    data = []
+    for line in lines[1:]:
+        parts = line.split()
+        if len(parts) == len(columns):
+            data.append(parts)
+        else:
+            class_name_parts = []
+            for i, part in enumerate(parts):
+                try:
+                    float(part)
+                    first_num_idx = i
+                    break
+                except:
+                    class_name_parts.append(part)
+            class_name = ' '.join(class_name_parts)
+            rest = parts[first_num_idx:]
+            row = [class_name] + rest
+            data.append(row)
+
+    class_report_df = pd.DataFrame(data, columns=columns)
+    for col in columns[1:]:
+        class_report_df[col] = pd.to_numeric(class_report_df[col], errors='coerce')
+
+    # Estadísticas descriptivas (igual que en SVM)
+    features = [
+        'RoundKills',
+        'RoundDeaths',
+        'KDR',
+        'TeamStartingEquipmentValue',
+        'RLethalGrenadesThrown',
+        'RNonLethalGrenadesThrown',
+        'Map',
+        'Team'
+    ]
+    df_filtered = df[df['RoundWinner'].isin(['True', 'False'])].copy()
+    X = df_filtered[features]
+    X = pd.get_dummies(X, columns=['Map', 'Team'])
+
+    estadisticas, estadisticas_records = generar_estadisticas(X)
+
+    # Rutas a imágenes estáticas (pon las tuyas)
+    confusion_matrix = "/static/img/confusion_matrix_decision_tree.png"
+    roc_auc_curve = "/static/img/roc_auc_curve_decision_tree.png"
+    prob_dist = "/static/img/distribucion_probabilidades_decision_tree.png"
+
+    return templates.TemplateResponse("Decision_tree_clasificacion.html", {
+        "request": request,
+        "accuracy": f"{accuracy:.2f}",
+        "precision": f"{precision:.2f}",
+        "recall": f"{recall:.2f}",
+        "f1": f"{f1:.2f}",
+        "confusion_matrix": confusion_matrix,
+        "roc_auc_curve": roc_auc_curve,
+        "prob_dist": prob_dist,
+        "class_report": class_report_df,
+        "class_report_records": class_report_df.to_dict(orient="records"),
+        "estadisticas": estadisticas,
+        "estadisticas_records": estadisticas_records,
+    })
+
+# === RUTA: KNN - Clasificación ===
+@app.get("/knn", response_class=HTMLResponse)
+async def knn_clasificacion(request: Request):
+    # Filtrar y preparar datos para estadística descriptiva
+    features = [
+        'RoundKills',
+        'RoundDeaths',
+        'KDR',
+        'TeamStartingEquipmentValue',
+        'RLethalGrenadesThrown',
+        'RNonLethalGrenadesThrown',
+        'Map',
+        'Team'
+    ]
+
+    df_filtered = df[df['RoundWinner'].isin(['True', 'False'])].copy()
+    X = df_filtered[features]
+    X = pd.get_dummies(X, columns=['Map', 'Team'])
+
+    # Métricas fijas
+    accuracy = 0.70
+    precision = 0.71
+    recall = 0.68
+    f1 = 0.69
+
+    # Reporte de clasificación por clase
+    class_report_dict = {
+        "Clase": ["Perdida", "Victoria", "accuracy", "macro avg", "weighted avg"],
+        "precision": [0.68, 0.71, "", 0.70, 0.70],
+        "recall":    [0.71, 0.68, "", 0.70, 0.70],
+        "f1-score":  [0.70, 0.69, 0.70, 0.70, 0.70],
+        "support":   [3234, 3320, 6554, 6554, 6554]
+    }
+    class_report_df = pd.DataFrame(class_report_dict)
+    class_report_df = class_report_df.rename(columns={"Clase": ""})
+    class_report_records = class_report_df.to_dict(orient="records")
+
+    # Estadísticas descriptivas
+    estadisticas, estadisticas_records = generar_estadisticas(X)
+
+    # Imágenes estáticas
+    confusion_matrix = "/static/img/confusion_matrix_knn.png"
+    roc_auc_curve = "/static/img/roc_auc_curve_knn.png"
+    prob_dist = "/static/img/distribucion_probabilidades_knn.png"
+
+    return templates.TemplateResponse("K-Nearest_Neighbors_Clasificacion.html", {
+        "request": request,
+        "accuracy": f"{accuracy:.2f}",
+        "precision": f"{precision:.2f}",
+        "recall": f"{recall:.2f}",
+        "f1": f"{f1:.2f}",
+        "confusion_matrix": confusion_matrix,
+        "roc_auc_curve": roc_auc_curve,
+        "prob_dist": prob_dist,
+        "class_report": class_report_df,
+        "class_report_records": class_report_records,
+        "estadisticas": estadisticas,
+        "estadisticas_records": estadisticas_records
+    })
+
+
+# === RUTA: logistic_regression===
+@app.get("/logistic-regression-clasificacion", response_class=HTMLResponse)
+async def logistic_regression_clasificacion(request: Request):
+    # Variables y target para preparar estadísticas
+    features = [
+        'RoundKills',
+        'RoundDeaths',
+        'KDR',
+        'TeamStartingEquipmentValue',
+        'RLethalGrenadesThrown',
+        'RNonLethalGrenadesThrown',
+        'Map',
+        'Team'
+    ]
+
+    # Filtrar dataset válido para clasificación
+    df_filtered = df[df['RoundWinner'].isin(['True', 'False'])].copy()
+    X = df_filtered[features]
+    X = pd.get_dummies(X, columns=['Map', 'Team'])
+
+    y = df_filtered['RoundWinner'].replace({'True':1, 'False':0}).astype(int)
+
+    # Métricas fijas
+    accuracy = 0.71
+    precision = 0.70
+    recall = 0.74
+    f1 = 0.72
+
+    # Reporte de clasificación en texto plano
+    classification_report_text = """
+              precision    recall  f1-score   support
+
+     Perdida       0.72      0.68      0.70      3234
+    Victoria       0.70      0.74      0.72      3320
+
+    accuracy                           0.71      6554
+   macro avg       0.71      0.71      0.71      6554
+weighted avg       0.71      0.71      0.71      6554
+    """
+
+    # Procesar texto en DataFrame para tabla
+    lines = [line.strip() for line in classification_report_text.strip().splitlines() if line.strip()]
+    columns = ['class'] + lines[0].split()
+    data = []
+    for line in lines[1:]:
+        parts = line.split()
+        if len(parts) == len(columns):
+            data.append(parts)
+        else:
+            class_name_parts = []
+            for i, part in enumerate(parts):
+                try:
+                    float(part)
+                    first_num_idx = i
+                    break
+                except:
+                    class_name_parts.append(part)
+            class_name = ' '.join(class_name_parts)
+            rest = parts[first_num_idx:]
+            data.append([class_name] + rest)
+
+    class_report_df = pd.DataFrame(data, columns=columns)
+    for col in columns[1:]:
+        class_report_df[col] = pd.to_numeric(class_report_df[col], errors='coerce')
+
+    # Estadísticas descriptivas
+    estadisticas, estadisticas_records = generar_estadisticas(X)
+
+    # Rutas a imágenes estáticas (ajusta con tus imágenes)
+    confusion_matrix = "/static/img/confusion_matrix_logistic_regression.png"
+    roc_auc_curve = "/static/img/roc_auc_curve_logistic_regression.png"
+    prob_dist = "/static/img/distribucion_probabilidades_logistic_regression.png"
+
+    return templates.TemplateResponse("Logistic_Regression_Clasificacion.html", {
+        "request": request,
+        "accuracy": f"{accuracy:.2f}",
+        "precision": f"{precision:.2f}",
+        "recall": f"{recall:.2f}",
+        "f1": f"{f1:.2f}",
+        "confusion_matrix": confusion_matrix,
+        "roc_auc_curve": roc_auc_curve,
+        "prob_dist": prob_dist,
+        "class_report": class_report_df,
+        "class_report_records": class_report_df.to_dict(orient="records"),
+        "estadisticas": estadisticas,
+        "estadisticas_records": estadisticas_records,
+    })
+
+# === RUTA: Random forest===
+
+@app.get("/random-forest-clasificacion", response_class=HTMLResponse)
+async def random_forest_clasificacion(request: Request):
+    # Variables y target
+    features = [
+        'RoundKills',
+        'RoundDeaths',
+        'KDR',
+        'TeamStartingEquipmentValue',
+        'RLethalGrenadesThrown',
+        'RNonLethalGrenadesThrown',
+        'Map',
+        'Team'
+    ]
+
+    # Filtrar dataset válido para clasificación
+    df_filtered = df[df['RoundWinner'].isin(['True', 'False'])].copy()
+    X = df_filtered[features]
+    X = pd.get_dummies(X, columns=['Map', 'Team'])
+
+    y = df_filtered['RoundWinner'].replace({'True': 1, 'False': 0}).astype(int)
+
+    # Métricas fijas (según tu reporte)
+    accuracy = 0.70
+    precision = 0.71
+    recall = 0.70
+    f1 = 0.70
+
+    # Reporte de clasificación en texto plano
+    classification_report_text = """
+              precision    recall  f1-score   support
+
+     Perdida       0.70      0.70      0.70      3234
+    Victoria       0.71      0.70      0.70      3320
+
+    accuracy                           0.70      6554
+   macro avg       0.70      0.70      0.70      6554
+weighted avg       0.70      0.70      0.70      6554
+    """
+
+    # Procesar texto en DataFrame para tabla
+    lines = [line.strip() for line in classification_report_text.strip().splitlines() if line.strip()]
+    columns = ['class'] + lines[0].split()
+    data = []
+    for line in lines[1:]:
+        parts = line.split()
+        if len(parts) == len(columns):
+            data.append(parts)
+        else:
+            class_name_parts = []
+            for i, part in enumerate(parts):
+                try:
+                    float(part)
+                    first_num_idx = i
+                    break
+                except:
+                    class_name_parts.append(part)
+            class_name = ' '.join(class_name_parts)
+            rest = parts[first_num_idx:]
+            data.append([class_name] + rest)
+
+    class_report_df = pd.DataFrame(data, columns=columns)
+    for col in columns[1:]:
+        class_report_df[col] = pd.to_numeric(class_report_df[col], errors='coerce')
+
+    # Estadísticas descriptivas
+    estadisticas, estadisticas_records = generar_estadisticas(X)
+
+    # Rutas a imágenes estáticas que debes colocar en /static/img/
+    confusion_matrix = "/static/img/confusion_matrix_random_forest.png"
+    roc_auc_curve = "/static/img/roc_auc_curve_random_forest.png"
+    prob_dist = "/static/img/distribucion_probabilidades_random_forest.png"
+
+    return templates.TemplateResponse("Random_Forest_Clasificacion.html", {
+        "request": request,
+        "accuracy": f"{accuracy:.2f}",
+        "precision": f"{precision:.2f}",
+        "recall": f"{recall:.2f}",
+        "f1": f"{f1:.2f}",
+        "confusion_matrix": confusion_matrix,
+        "roc_auc_curve": roc_auc_curve,
+        "prob_dist": prob_dist,
+        "class_report": class_report_df,
+        "class_report_records": class_report_df.to_dict(orient="records"),
+        "estadisticas": estadisticas,
+        "estadisticas_records": estadisticas_records,
+    })

@@ -1,0 +1,146 @@
+body {
+    margin: 0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    background: url("/static/img/fondo.jpeg") no-repeat center center fixed;
+    background-size: cover;
+    color: #f0f0f0;
+}
+
+.overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+header {
+    margin-bottom: 40px;
+}
+
+/* Navbar con contenido alineado a la izquierda */
+.nav-link:hover {
+  color: #a7c2d3;
+  text-decoration: underline;
+}
+.navbar {
+    background-color: rgba(255, 170, 0, 0.359);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    position: relative;
+    z-index: 10;
+}
+
+h1 {
+    font-size: 3em;
+    color: #ffaa00;
+    letter-spacing: 2px;
+    margin-top: 0;
+    margin-bottom: 0.2em;
+}
+
+.subtitulo {
+    font-size: 1.2em;
+    color: #ccc;
+}
+
+.tabla-wrapper {
+    overflow-x: auto;
+    background-color: rgba(20, 20, 20, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #ffaa00;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #fff;
+}
+
+th, td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #444;
+}
+
+th {
+    background-color: #1f1f1f;
+    color: #ffaa00;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+tr:hover {
+    background-color: rgba(255, 170, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    .subtitulo {
+        font-size: 1em;
+    }
+
+    th, td {
+        font-size: 0.8em;
+    }
+}
+
+.model-section {
+    background-color: rgba(34, 34, 34, 0.9);
+    padding: 20px;
+    margin-bottom: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #ffaa00;
+}
+
+/* Aquí el arreglo para la sección de métricas */
+.metric-background {
+  background-color: rgba(34, 34, 34, 0.9); /* gris oscuro semi-transparente */
+  padding: 1.5rem;
+  border-radius: 10px;
+  color: #f0f0f0; /* texto claro para mejor contraste */
+  box-shadow: 0 0 15px #ffaa00; /* sombra naranja para consistencia */
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.metric-background .metric-card {
+  border-radius: 0.5rem;
+  padding: 1rem 2rem;
+  background-color: rgba(0,0,0,0.3);
+  border: 2px solid rgba(255, 170, 0, 0.9); /* borde naranja sólido */
+  min-width: 140px;
+  box-shadow: 0 0 8px rgba(255, 170, 0, 0.6); /* ligera sombra naranja */
+  transition: transform 0.3s ease;
+}
+
+.metric-background .metric-card:hover {
+  transform: scale(1.05);
+}
+
+.metric-background .metric-card h5 {
+  margin-bottom: 0.5rem;
+  color: #ffaa00;
+  font-weight: 700;
+}
+
+.metric-background .metric-card p {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin: 0;
+}
